@@ -15,11 +15,9 @@ namespace PropelAuth.Api
 
         #region ctor
         /// <summary>
-        /// Initializes a new instance of the <see cref="PropelAuthApiClient"/> class.
+        /// Initializes a new instance of the <see cref="PropelAuthApiClient"/> class.  This assumes that the HttpClient is configured correctly with a base URI address and a corresponding Bearer token.
         /// </summary>
         /// <param name="httpClient">The HTTP client.</param>
-        /// <param name="baseUriAddress">The base URI address.</param>
-        /// <param name="apiKey">The API key.</param>
         public PropelAuthApiClient(HttpClient httpClient) {
             _httpClient = httpClient;
             _retryPolicy = Policy.HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
