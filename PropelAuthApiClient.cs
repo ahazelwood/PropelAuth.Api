@@ -15,7 +15,8 @@ namespace PropelAuth.Api
 
         #region ctor
         /// <summary>
-        /// Initializes a new instance of the <see cref="PropelAuthApiClient"/> class.  This assumes that the HttpClient is configured correctly with a base URI address and a corresponding Bearer token.
+        /// Initializes a new instance of the <see cref="PropelAuthApiClient"/> class.  
+	/// This assumes that the HttpClient is configured correctly with a base URI address and a corresponding Bearer token.
         /// </summary>
         /// <param name="httpClient">The HTTP client.</param>
         public PropelAuthApiClient(HttpClient httpClient) {
