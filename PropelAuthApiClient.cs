@@ -24,6 +24,21 @@ namespace PropelAuth.Api
             _retryPolicy = Policy.HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropelAuthApiClient"/> class with the specified API endpoint and API key.
+        /// </summary>
+        /// <param name="apiEndpoint">The API endpoint.</param>
+        /// <param name="apiKey">The API key.</param>
+        public PropelAuthApiClient(string apiEndpoint, string apiKey) {
+            _httpClient = new HttpClient();
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _httpClient.BaseAddress = new Uri(apiEndpoint);
+
+            _retryPolicy = Policy.HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+        }
         #endregion
 
         #region Http Methods
