@@ -17,6 +17,12 @@ namespace PropelAuth.Api.Models
         public string? Domain { get; set; }
 
         /// <summary>
+        /// A list of additional domains that are also supported by this organization.
+        /// </summary>
+        [JsonPropertyName("extra_domains")]
+        public List<string> ExtraDomains { get; set; } = [];
+
+        /// <summary>
         /// Whether users can automatically join the organization if their email address matches the organization domain. 
         /// If this is true, you must also set the domain property.
         /// </summary>
