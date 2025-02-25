@@ -1,0 +1,12 @@
+D:\projects\5.0.0\source\library\PropelAuth.Api\bin\Debug\net8.0\PropelAuth.Api.deps.json
+D:\projects\5.0.0\source\library\PropelAuth.Api\bin\Debug\net8.0\PropelAuth.Api.dll
+D:\projects\5.0.0\source\library\PropelAuth.Api\bin\Debug\net8.0\PropelAuth.Api.pdb
+D:\projects\5.0.0\source\library\PropelAuth.Api\obj\Debug\net8.0\PropelAuth.Api.csproj.AssemblyReference.cache
+D:\projects\5.0.0\source\library\PropelAuth.Api\obj\Debug\net8.0\PropelAuth.Api.GeneratedMSBuildEditorConfig.editorconfig
+D:\projects\5.0.0\source\library\PropelAuth.Api\obj\Debug\net8.0\PropelAuth.Api.AssemblyInfoInputs.cache
+D:\projects\5.0.0\source\library\PropelAuth.Api\obj\Debug\net8.0\PropelAuth.Api.AssemblyInfo.cs
+D:\projects\5.0.0\source\library\PropelAuth.Api\obj\Debug\net8.0\PropelAuth.Api.csproj.CoreCompileInputs.cache
+D:\projects\5.0.0\source\library\PropelAuth.Api\obj\Debug\net8.0\PropelAuth.Api.dll
+D:\projects\5.0.0\source\library\PropelAuth.Api\obj\Debug\net8.0\refint\PropelAuth.Api.dll
+D:\projects\5.0.0\source\library\PropelAuth.Api\obj\Debug\net8.0\PropelAuth.Api.pdb
+D:\projects\5.0.0\source\library\PropelAuth.Api\obj\Debug\net8.0\ref\PropelAuth.Api.dll
