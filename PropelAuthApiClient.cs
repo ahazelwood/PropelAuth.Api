@@ -1,6 +1,6 @@
-﻿using System.Text;
+﻿using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Polly;
 using Polly.Retry;
 using PropelAuth.Api.Extensions;
@@ -15,8 +15,8 @@ namespace PropelAuth.Api
 
         #region ctor
         /// <summary>
-        /// Initializes a new instance of the <see cref="PropelAuthApiClient"/> class.  
-	/// This assumes that the HttpClient is configured correctly with a base URI address and a corresponding Bearer token.
+        /// Initializes a new instance of the <see cref="PropelAuthApiClient"/> class.
+        /// This assumes that the HttpClient is configured correctly with a base URI address and a corresponding Bearer token.
         /// </summary>
         /// <param name="httpClient">The HTTP client.</param>
         public PropelAuthApiClient(HttpClient httpClient) {
@@ -283,8 +283,8 @@ namespace PropelAuth.Api
         /// </summary>
         /// <param name="userId">The ID of the user to update.</param>
         /// <param name="request">The <see cref="UpdateUserRequest"> request.</param>
-        public async Task<bool> UpdateUserAsync(string userId, UpdateUserRequest request) {
-            return await PostAsync<UpdateUserRequest, bool>($"/api/backend/v1/user/${userId}", request);
+        public async Task UpdateUserAsync(string userId, UpdateUserRequest request) {
+            await PutAsync($"/api/backend/v1/user/${userId}", request);
         }
 
         /// <summary>
@@ -293,7 +293,7 @@ namespace PropelAuth.Api
         /// <param name="userId">The ID of the user to update.</param>
         /// <param name="request">The <see cref="UpdateEmailRequest"> request.</param>
         public async Task UpdateEmailAsync(string userId, UpdateEmailRequest request) {
-            await PostEmptyResponseAsync($"/api/backend/v1/user/${userId}/email", request);
+            await PutAsync($"/api/backend/v1/user/${userId}/email", request);
         }
 
         /// <summary>
@@ -301,8 +301,8 @@ namespace PropelAuth.Api
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <param name="request">The request.</param>
-        public async Task<bool> UpdatePasswordAsync(string userId, UpdatePasswordRequest request) {
-            return await PostAsync<UpdatePasswordRequest, bool>($"/api/backend/v1/user/{userId}/password", request);
+        public async Task UpdatePasswordAsync(string userId, UpdatePasswordRequest request) {
+            await PutAsync($"/api/backend/v1/user/{userId}/password", request);
         }
 
         /// <summary>
@@ -468,7 +468,7 @@ namespace PropelAuth.Api
         /// <param name="orgId">The organization ID.</param>
         /// <param name="request">The <see cref="UpdateOrgRequest"/> request.</param>
         public async Task UpdateOrgAsync(string orgId, UpdateOrgRequest request) {
-            await PostEmptyResponseAsync($"/api/backend/v1/org/{orgId}", request);
+            await PutAsync($"/api/backend/v1/org/{orgId}", request);
         }
 
         /// <summary>
@@ -651,228 +651,5 @@ namespace PropelAuth.Api
         }
 
         #endregion
-
-        #region OAuth Apis
-
-
-
-        #endregion
-    }
-
-    public class FindApiKeyRequest 
-    {
-        /// <summary>
-        /// Filter by the user ID of the API key owner.
-        /// </summary>
-        [JsonPropertyName("user_id")]
-        public string? UserId { get; set; }
-
-        /// <summary>
-        /// Filter by the email of the API key owner.
-        /// </summary>
-        [JsonPropertyName("user_email")]
-        public string? UserEmail { get; set; }
-
-        /// <summary>
-        /// Filter by the organization ID of the API key owner.
-        /// </summary>
-        [JsonPropertyName("org_id")]
-        public string? OrgId { get; set; }
-
-        /// <summary>
-        /// The page number to return.
-        /// </summary>
-        [JsonPropertyName("page_number")]
-        public int PageNumber { get; set; } = 0;
-
-        /// <summary>
-        /// The number of results to return per page.
-        /// </summary>
-        [JsonPropertyName("page_size")]
-        public int PageSize { get; set; } = 10;
-    }
-
-    public class FindApiKeyResponse {
-        [JsonPropertyName("api_keys")]
-        public List<PropelAuthApiKey> ApiKeys { get; set; } = [];
-
-        [JsonPropertyName("total_api_keys")]
-        public int TotalApiKeys { get; set; }
-
-        [JsonPropertyName("current_page")]
-        public int CurrentPage { get; set; }
-
-        [JsonPropertyName("page_size")]
-        public int PageSize { get; set; }
-
-        [JsonPropertyName("has_more_results")]
-        public bool HasMoreResults { get; set; }
-    }
-
-    public class PropelAuthApiKey 
-    {
-        /// <summary>
-        /// The API Key internal ID.  This is not the API Key Token.
-        /// </summary>
-        [JsonPropertyName("api_key_id")]
-        public string ApiKeyId { get; set; } = null!;
-
-        /// <summary>
-        /// If specified, this is a API Key associated with the specified User.
-        /// </summary>
-        [JsonPropertyName("user_id")]
-        public string? UserId { get; set; }
-
-        /// <summary>
-        /// If specified, this is a Organization API Key.
-        /// </summary>
-        [JsonPropertyName("org_id")]
-        public string? OrgId { get; set; }
-
-        /// <summary>
-        /// Timestamp that represents when the API Key was created.
-        /// </summary>
-        [JsonPropertyName("created_at")]
-        public long CreatedAt { get; set; }
-
-        /// <summary>
-        /// A <see cref="DateTime"> representation of the CreatedAt property.
-        /// </summary>
-        [JsonIgnore]
-        public DateTime CreatedAtDate => DateTime.UnixEpoch.AddSeconds(CreatedAt);
-
-        /// <summary>
-        /// Timesamp that represents when the API Key will expire.
-        /// </summary>
-        [JsonPropertyName("expires_at_seconds")]
-        public long? ExpiresAtSeconds { get; set; }
-
-        /// <summary>
-        /// A <see cref="DateTime"> representation of the ExpiresAtSeconds property.
-        /// </summary>
-        [JsonIgnore]
-        public DateTime? ExpiresAtSecondsDate => ExpiresAtSeconds.HasValue ? DateTime.UnixEpoch.AddSeconds(ExpiresAtSeconds.Value) : null;
-
-        /// <summary>
-        /// A list of Metadata to associate with the API Key.
-        /// </summary>
-        [JsonPropertyName("metadata")]
-        public Dictionary<string, object> Metadata { get; set; } = [];
-    }
-
-    public class UpdateApiKeyRequest
-    {
-        /// <summary>
-        /// A unix timestamp of when the API key should expire. If not provided, the API key will not expire.
-        /// </summary>
-        [JsonPropertyName("expires_at_seconds")]
-        protected long? ExpiresAtSeconds => ExpiresAt.HasValue ? (long)ExpiresAt.Value.Subtract(DateTime.UnixEpoch).TotalSeconds : null;
-
-        /// <summary>
-        /// A <see cref="DateTime"/> instance of when the API key should expire.  If not provided, the API key will not expire.
-        /// </summary>
-        [JsonIgnore]
-        public DateTime? ExpiresAt { get; set; }
-
-        /// <summary>
-        /// Metadata to attach to the API key. This will be returned on validation.
-        /// </summary>
-        [JsonPropertyName("metadata")]
-        public Dictionary<string, object> Metadata { get; set; } = [];
-    }
-
-    public class CreateApiKeyResponse
-    {
-        public required string ApiKeyId { get; set; }
-        public required string ApiKeyToken { get; set; }
-    }
-
-    public class CreateApiKeyRequest
-    {
-        /// <summary>
-        /// The ID of the organization to associate the API key with. If not provided, the API key will not be associated with an organization.
-        /// </summary>
-        [JsonPropertyName("org_id")]
-        public string? OrgId { get; set; }
-
-        /// <summary>
-        /// The ID of the user to associate the API key with. If not provided, the API key will not be associated with a user.
-        /// </summary>
-        [JsonPropertyName("user_id")]
-        public string? UserId { get; set; }
-
-        /// <summary>
-        /// A unix timestamp of when the API key should expire. If not provided, the API key will not expire.
-        /// </summary>
-        [JsonPropertyName("expires_at_seconds")]
-        protected long? ExpiresAtSeconds {
-            get {
-                if (!ExpiresAt.HasValue)
-                    return null;
-
-                var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                return (long)ExpiresAt.Value.Subtract(unixEpoch).TotalSeconds;
-            }
-        }
-
-        /// <summary>
-        /// A <see cref="DateTime"/> instance of when the API key should expire.  If not provided, the API key will not expire.
-        /// </summary>
-        [JsonIgnore]
-        public DateTime? ExpiresAt { get; set; }
-
-        /// <summary>
-        /// Metadata to attach to the API key. This will be returned on validation.
-        /// </summary>
-        [JsonPropertyName("metadata")]
-        public Dictionary<string, object> Metadata { get; set; } = [];
-    }
-
-    public class ValidateApiKeyRequest 
-    {
-        [JsonPropertyName("api_key_token")]
-        public required string ApiKey { get; set; }
-    }
-
-    public class ValidateApiKeyResponse 
-    {
-        [JsonPropertyName("metadata")]
-        public Dictionary<string, object> Metadata { get; set; } = [];
-
-        [JsonPropertyName("user")]
-        public PropelAuthUser? User { get; set; }
-
-        [JsonPropertyName("org")]
-        public PropelAuthOrg? Org { get; set; }
-
-        [JsonPropertyName("user_in_org")]
-        public TokenOrgMemberInfo? UserInOrg { get; set; } 
-    }
-
-    public class TokenOrgMemberInfo 
-    {
-        [JsonPropertyName("org_id")]
-        public string OrgId { get; set; } = null!;
-
-        [JsonPropertyName("org_name")]
-        public string OrgName { get; set; } = null!;
-
-        [JsonPropertyName("org_metadata")]
-        public Dictionary<string, object> OrgMetadata { get; set; } = [];
-
-        [JsonPropertyName("user_save_org_name")]
-        public string? UrlSafeOrgName { get; set; }
-
-        [JsonPropertyName("user_role")]
-        public string? UserAssignedRole { get; set; }
-
-        [JsonPropertyName("inherited_user_roles_plus_current_role")]
-        public List<string> UserInheritedRolesPlusCurrentRole { get; set; } = [];
-
-        [JsonPropertyName("user_permissions")]
-        public List<string> UserPermissions { get; set; } = [];
-
-        [JsonPropertyName("additional_roles")]
-        public List<string> UserAssignedAdditionalRoles { get; set; } = [];
     }
 }
