@@ -1,4 +1,4 @@
-﻿namespace PropelAuth.Api.Models
+namespace PropelAuth.Api.Models
 {
     public class CreateApiKeyResponse
     {
